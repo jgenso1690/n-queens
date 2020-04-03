@@ -12,7 +12,23 @@
 
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
+//window.findSolution = function(row, n, board, callback) {
+window.findSolution = function(row, n, board, callback) {
 
+
+  if (row === n) {
+    callback();
+    return;//iterating through all columns for row
+    for (var i = 0; i < n; i++) {
+      board.togglePiece(row, i); //place piece
+      if ( !board.hasAnyQueensConflicts()) {
+        findSolution(row + 1, n, board, callback);//no conflicts, move to next row }]using recursion
+      }//keep recursing, if no conflict
+      board.togglePiece(row, i);//remove piece, will go to next column, same row in next loop
+    }
+
+  }
+};
 
 
 window.findNRooksSolution = function(n) {
@@ -35,13 +51,13 @@ window.findNRooksSolution = function(n) {
 window.countNRooksSolutions = function(n) {
   var solutionCount = 0;
 
-  if (n == 1) {
+  if (n === 1) {
     solutionCount = 1;
   } else if (n === 2) {
     solutionCount = 2;
   } else {
     for (var i = 0; i < n; i++) {
-      solutionCount += countNRooksSolutions(n-1);
+      solutionCount += countNRooksSolutions(n - 1);
     }
   }
 
@@ -59,44 +75,16 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = 0;
-  var matrix = [];
-  for (var i = 0; i < n; i++) {
-    matrix[i] = [];
-    for (var j = 0; j < n; j++) {
-      matrix[i][j] = 0;
-    }
-  }
+
   //instantiation rule in Board.js line 12, for empty board
-  var board = new Board(matrix);
-
-  var findSolution = function(row) {
-
-    if (row === n) {
-      solutionCount++;
-      return;
-    }
-
-    //iterating through all columns for row
-    for (var i = 0; i < n; i++) {
-      //place piece
-      board.togglePiece(row, i);
-      if(!board['hasAnyQueenConflictsOn']()){
-        //no conflicts, move to next row using recursion
-        //keep recursing, if no conflict
-        findSolution(row+1);
-      }
-      //else {
-      //remove piece
-        board.togglePiece();
-    //}
-
-    }
-
-  };
-
-  findSolution(0); //start from first row
-
+  var board = new Board({n: n});
+  var solutionCount = 0;
+  //start from first row
+  //findSolution(0, n, board, callback);
+  var solution = findSolution(0, n, board, function() {
+    solutionCount++;
+  });
+  //var callback = ;
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
